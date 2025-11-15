@@ -44,8 +44,8 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
       'https://fe-thefunneleffect.vercel.app',
       'https://cms.thefunneleffect.org',
       'http://localhost:3001',
-      'https://thefunneleffect.org/',
-      'https://thefunneleffect.org'
+      'https://www.thefunneleffect.org/',
+      'https://www.thefunneleffect.org'
     ];
 
 const corsOptions = {
