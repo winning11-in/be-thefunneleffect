@@ -15,6 +15,7 @@ import authRoutes from './routes/auth.js';
 import pagesRoutes from './routes/pages.js';
 import tracksRoutes from './routes/tracks.js';
 import playlistsRoutes from './routes/playlists.js';
+import contactRoutes from './routes/contact.js';
 
 // Import Swagger specs
 import { specs } from './swagger.js';
@@ -43,6 +44,8 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
       'https://fe-thefunneleffect.vercel.app',
       'https://cms.thefunneleffect.org',
       'http://localhost:3001',
+      'https://thefunneleffect.org/',
+      'https://thefunneleffect.org'
     ];
 
 const corsOptions = {
@@ -65,6 +68,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/pages', pagesRoutes);
 app.use('/api/tracks', tracksRoutes);
 app.use('/api/playlists', playlistsRoutes);
+app.use('/api/contact', contactRoutes);
 app.use('/api', apiRoutes);
 
 // Swagger documentation
@@ -130,6 +134,7 @@ app.get('/', (req, res) => {
     status: 'running',
     endpoints: {
       health: '/api/health',
+      contact: '/api/contact',
       api: '/api'
     }
   });
