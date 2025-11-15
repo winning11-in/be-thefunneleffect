@@ -69,6 +69,7 @@ app.use('/api/pages', pagesRoutes);
 app.use('/api/tracks', tracksRoutes);
 app.use('/api/playlists', playlistsRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/contacts', contactRoutes); // Admin endpoint for managing contacts
 app.use('/api', apiRoutes);
 
 // Swagger documentation
@@ -135,6 +136,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/api/health',
       contact: '/api/contact',
+      contacts: '/api/contacts (Admin)',
       api: '/api'
     }
   });

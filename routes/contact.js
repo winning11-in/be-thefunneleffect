@@ -1,4 +1,6 @@
 import express from 'express';
+import Contact from '../models/Contact.js';
+import { authMiddleware } from '../middleware/index.js';
 
 const router = express.Router();
 
@@ -133,10 +135,6 @@ router.post('/', async (req, res) => {
       });
     }
     
-    // Generate a unique ID for this contact form submission
-    const contactId = `contact_${Date.now()}`;
-    const submittedAt = new Date().toISOString();
-    
     // Sanitize and prepare the contact data
     const contactData = {
       name: name.trim(),
@@ -145,28 +143,25 @@ router.post('/', async (req, res) => {
       description: description ? description.trim() : ''
     };
     
+    // Save contact to database
+    const contact = new Contact(contactData);
+    const savedContact = await contact.save();
+    
     // Log the contact form submission (for debugging/monitoring)
-    console.log('Contact form submission received:', {
-      id: contactId,
-      submittedAt: submittedAt,
+    console.log('Contact form submission saved:', {
+      id: savedContact._id,
+      submittedAt: savedContact.createdAt,
       contact: contactData,
       ip: req.ip,
       userAgent: req.get('User-Agent')
     });
     
-    // Here you could:
-    // 1. Save to database (if needed in future)
-    // 2. Send email notification
-    // 3. Send to CRM system
-    // 4. Send to webhook
-    // For now, we'll just return success response
-    
     res.status(200).json({
       success: true,
       message: 'Contact form submitted successfully',
       data: {
-        id: contactId,
-        submittedAt: submittedAt,
+        id: savedContact._id,
+        submittedAt: savedContact.createdAt,
         contact: contactData
       }
     });
@@ -177,6 +172,178 @@ router.post('/', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/contacts:
+ *   get:
+ *     tags:
+ *       - Contact
+ *     summary: Get all contact submissions (Admin only)
+ *     description: Retrieve paginated list of contact form submissions
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *         description: Number of items per page
+ *     responses:
+ *       200:
+ *         description: List of contacts retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                       mobile:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                 page:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 total:
+ *                   type: integer
+ *                 limit:
+ *                   type: integer
+ *       401:
+ *         description: Unauthorized - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
+
+// Get all contacts (Admin only)
+router.get('s', authMiddleware, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await Contact.countDocuments();
+    const contacts = await Contact.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.json({
+      success: true,
+      data: contacts,
+      page,
+      totalPages,
+      total,
+      limit
+    });
+  } catch (error) {
+    console.error('Error fetching contacts:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch contacts',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/contacts/{id}:
+ *   delete:
+ *     tags:
+ *       - Contact
+ *     summary: Delete a contact submission (Admin only)
+ *     description: Delete a specific contact form submission
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Contact ID
+ *     responses:
+ *       200:
+ *         description: Contact deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Contact deleted successfully"
+ *       404:
+ *         description: Contact not found
+ *       401:
+ *         description: Unauthorized - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
+
+// Delete a contact (Admin only)
+router.delete('s/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const contact = await Contact.findByIdAndDelete(id);
+    
+    if (!contact) {
+      return res.status(404).json({
+        success: false,
+        message: 'Contact not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Contact deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting contact:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete contact',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
