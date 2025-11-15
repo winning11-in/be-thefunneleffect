@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "5000",
+    "MONGODB_URI_MONGODB_URI": "mongodb+srv://Vercel-Admin-da-dynamic-pages:jRv4Zh2SNY442kmO@da-dynamic-pages.3uym3zn.mongodb.net/?retryWrites=true&w=majority"
+  }
+}
