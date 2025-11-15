@@ -1,6 +1,6 @@
 import express from 'express';
 import Contact from '../models/Contact.js';
-import { authMiddleware } from '../middleware/index.js';
+import { authenticate } from '../middleware/index.js';
 
 const router = express.Router();
 
@@ -250,7 +250,7 @@ router.post('/', async (req, res) => {
  */
 
 // Get all contacts (Admin only)
-router.get('s', authMiddleware, async (req, res) => {
+router.get('s', authenticate, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -322,7 +322,7 @@ router.get('s', authMiddleware, async (req, res) => {
  */
 
 // Delete a contact (Admin only)
-router.delete('s/:id', authMiddleware, async (req, res) => {
+router.delete('s/:id', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
 
