@@ -252,25 +252,36 @@ router.post('/', async (req, res) => {
 // Get all contacts (Admin only)
 router.get('/', authenticate, async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const { page = 1, limit = 10, search } = req.query;
     const skip = (page - 1) * limit;
 
-    const total = await Contact.countDocuments();
-    const contacts = await Contact.find()
+    // Build query
+    let query = {};
+    
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { mobile: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const total = await Contact.countDocuments(query);
+    const contacts = await Contact.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(parseInt(limit));
 
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(total / parseInt(limit));
 
     res.json({
       success: true,
       data: contacts,
-      page,
+      page: parseInt(page),
       totalPages,
       total,
-      limit
+      limit: parseInt(limit)
     });
   } catch (error) {
     console.error('Error fetching contacts:', error);
