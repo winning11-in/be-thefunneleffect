@@ -15,7 +15,7 @@ const options = {
         description: 'Development server',
       },
       {
-        url: 'https://da-pages-be.vercel.app',
+        url: 'https://be-thefunneleffect.vercel.app',
         description: 'Production server',
       },
     ],
