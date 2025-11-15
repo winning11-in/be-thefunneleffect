@@ -14,6 +14,6 @@
   ],
   "env": {
     "NODE_ENV": "5000",
-    "MONGODB_URI_MONGODB_URI": "mongodb+srv://Vercel-Admin-da-dynamic-pages:jRv4Zh2SNY442kmO@da-dynamic-pages.3uym3zn.mongodb.net/?retryWrites=true&w=majority"
+    "MONGODB_URI": "mongodb+srv://Vercel-Admin-cms-be-thefunneleffect:xyP4Q9g6aIpisaSY@cms-be-thefunneleffect.7i3z22m.mongodb.net/?retryWrites=true&w=majority"
   }
 }

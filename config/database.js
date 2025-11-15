@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 const connectDB = async () => {
   try {
     console.log('Attempting to connect to MongoDB...');
-    console.log('MongoDB URI:', process.env.MONGODB_URI_MONGODB_URI ? 'Set' : 'Not set');
+    console.log('MongoDB URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
     
-    const mongoUri = process.env.MONGODB_URI_MONGODB_URI || 'mongodb://localhost:27017/da-orbit';
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/da-orbit';
     console.log('Using MongoDB URI ending with:', mongoUri.split('/').pop());
     
     const conn = await mongoose.connect(mongoUri, {
@@ -35,7 +35,7 @@ const connectDB = async () => {
   } catch (error) {
     console.error('Error connecting to MongoDB:', error.message);
     console.error('Full error:', error);
-    console.error('MongoDB URI used:', process.env.MONGODB_URI_MONGODB_URI || 'mongodb://localhost:27017/da-dynamic-pages');
+    console.error('MongoDB URI used:', process.env.MONGODB_URI || 'mongodb://localhost:27017/da-dynamic-pages');
     process.exit(1);
   }
 };
