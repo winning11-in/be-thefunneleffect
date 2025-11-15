@@ -5,9 +5,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'DA Pages Backend API',
+      title: 'Funnel Effect Pages Backend API',
       version: '1.0.0',
-      description: 'Backend API for DA Dynamic Pages system',
+      description: 'Backend API for Funnel Effect Dynamic Pages system',
     },
     servers: [
       {

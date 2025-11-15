@@ -73,7 +73,7 @@ app.get('/api-docs', (req, res) => {
 <!DOCTYPE html>
 <html>
 <head>
-  <title>DA Pages Backend API Documentation</title>
+  <title>Funnel Effect Pages Backend API Documentation</title>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css" />
   <style>
     html {
@@ -125,7 +125,7 @@ app.get('/api-docs.json', (req, res) => {
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
-    message: 'DA Pages Backend API',
+    message: 'Funnel Effect Pages Backend API',
     version: '1.0.0',
     status: 'running',
     endpoints: {
