@@ -40,12 +40,9 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
   : [
       'http://localhost:3000',
-      'https://da-admin-dynamic-pages.vercel.app',
+      'https://fe-thefunneleffect.vercel.app',
+      'https://cms.thefunneleffect.org',
       'http://localhost:3001',
-      'https://techodio.daorbit.in/',
-      'https://techodio.daorbit.in',
-      'https://cms.daorbit.in/',
-      'https://cms.daorbit.in',
     ];
 
 const corsOptions = {
