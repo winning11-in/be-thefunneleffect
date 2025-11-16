@@ -33,10 +33,31 @@ const pageSchema = new mongoose.Schema({
     default: [],
     validate: {
       validator: function(v) {
-        return v.length <= 10; // Maximum 10 groups
+        if (v.length > 10) {
+          return false; // Maximum 10 groups
+        }
+        // Validate that all groups are from allowed options
+        const allowedGroups = ['blogs', 'cardiology', 'case-studies'];
+        return v.every(group => allowedGroups.includes(group));
       },
-      message: 'Cannot have more than 10 groups'
+      message: 'Groups must be from allowed options: blogs, cardiology, case-studies and cannot exceed 10 items'
     }
+  },
+  // SEO Fields
+  metaTitle: {
+    type: String,
+    trim: true,
+    maxlength: [60, 'Meta title cannot be more than 60 characters']
+  },
+  metaDescription: {
+    type: String,
+    trim: true,
+    maxlength: [160, 'Meta description cannot be more than 160 characters']
+  },
+  metaKeywords: {
+    type: String,
+    trim: true,
+    maxlength: [255, 'Meta keywords cannot be more than 255 characters']
   },
   editorType: {
     type: String,
@@ -57,6 +78,34 @@ const pageSchema = new mongoose.Schema({
   content: {
     type: String,
     default: ''
+  },
+  // Popular posts flag
+  popular: {
+    type: Boolean,
+    default: false
+  },
+  // Tags for the page
+  tags: {
+    type: [String],
+    default: [],
+    validate: {
+      validator: function(v) {
+        return v.length <= 20; // Maximum 20 tags
+      },
+      message: 'Cannot have more than 20 tags'
+    }
+  },
+  // Category for the page
+  category: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Category cannot be more than 100 characters']
+  },
+  // Read time in minutes
+  readTime: {
+    type: Number,
+    min: [1, 'Read time must be at least 1 minute'],
+    max: [999, 'Read time cannot exceed 999 minutes']
   }
 }, {
   timestamps: true // Adds createdAt and updatedAt fields
@@ -90,6 +139,7 @@ pageSchema.pre('save', function(next) {
 // Note: slug index is already created by 'unique: true' in schema
 pageSchema.index({ groups: 1 });
 pageSchema.index({ createdAt: -1 });
+pageSchema.index({ metaTitle: 'text', metaDescription: 'text', metaKeywords: 'text' });
 
 const Page = mongoose.model('Page', pageSchema);
 

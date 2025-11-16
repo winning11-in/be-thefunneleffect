@@ -60,6 +60,10 @@ const pageValidationRules = [
       if (value && value.length > 10) {
         throw new Error('Cannot have more than 10 groups');
       }
+      const allowedGroups = ['blogs', 'cardiology', 'case-studies'];
+      if (value && value.some(group => !allowedGroups.includes(group))) {
+        throw new Error('Groups must be from allowed options: blogs, cardiology, case-studies');
+      }
       return true;
     }),
   
@@ -76,7 +80,57 @@ const pageValidationRules = [
     .withMessage('Slug cannot be more than 100 characters'),
   
   body('content')
+    .optional(),
+  
+  // SEO fields validation
+  body('metaTitle')
     .optional()
+    .trim()
+    .isLength({ max: 60 })
+    .withMessage('Meta title cannot be more than 60 characters'),
+  
+  body('metaDescription')
+    .optional()
+    .trim()
+    .isLength({ max: 160 })
+    .withMessage('Meta description cannot be more than 160 characters'),
+  
+  body('metaKeywords')
+    .optional()
+    .trim()
+    .isLength({ max: 255 })
+    .withMessage('Meta keywords cannot be more than 255 characters'),
+  
+  // New fields validation
+  body('popular')
+    .optional()
+    .isBoolean()
+    .withMessage('Popular must be a boolean value'),
+  
+  body('tags')
+    .optional()
+    .isArray()
+    .withMessage('Tags must be an array')
+    .custom((value) => {
+      if (value && value.length > 20) {
+        throw new Error('Cannot have more than 20 tags');
+      }
+      if (value && value.some(tag => typeof tag !== 'string' || tag.trim().length === 0)) {
+        throw new Error('All tags must be non-empty strings');
+      }
+      return true;
+    }),
+  
+  body('category')
+    .optional()
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage('Category cannot be more than 100 characters'),
+  
+  body('readTime')
+    .optional()
+    .isInt({ min: 1, max: 999 })
+    .withMessage('Read time must be an integer between 1 and 999 minutes')
 ];
 
 // GET /api/pages - Get all pages
