@@ -67,12 +67,6 @@ const pageValidationRules = [
       return true;
     }),
   
-  body('editorType')
-    .notEmpty()
-    .withMessage('Editor type is required')
-    .isIn(['summernote', 'quill'])
-    .withMessage('Editor type must be either summernote or quill'),
-
   body('slug')
     .optional()
     .trim()
