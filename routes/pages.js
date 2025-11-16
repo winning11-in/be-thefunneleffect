@@ -130,14 +130,16 @@ const pageValidationRules = [
 // GET /api/pages - Get all pages
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, group, search } = req.query;
+    const { page = 1, limit = 10, groups, search } = req.query;
     const skip = (page - 1) * limit;
 
     // Build query
     let query = {};
     
-    if (group) {
-      query.groups = { $in: [group] };
+    if (groups) {
+      // Handle both single group string and array of groups
+      const groupsArray = Array.isArray(groups) ? groups : [groups];
+      query.groups = { $in: groupsArray };
     }
     
     if (search) {
