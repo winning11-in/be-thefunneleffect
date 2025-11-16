@@ -59,14 +59,6 @@ const pageSchema = new mongoose.Schema({
     trim: true,
     maxlength: [255, 'Meta keywords cannot be more than 255 characters']
   },
-  editorType: {
-    type: String,
-    required: [true, 'Editor type is required'],
-    enum: {
-      values: ['quill', 'summernote'],
-      message: 'Editor type must be either quill or summernote'
-    }
-  },
   slug: {
     type: String,
     required: [true, 'Slug is required'],
